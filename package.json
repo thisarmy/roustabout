@@ -1,0 +1,16 @@
+{
+  "name": "roustabout",
+  "version": "0.0.0",
+  "description": "Broad-based, non-specific skills. A job queue.",
+  "main": "./lib/index.js",
+  "directories"  : {"lib"  : "./lib"},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Le Roux Bodenstein",
+  "license": "MIT",
+  "dependencies": {
+    "redis": "^0.12.1",
+    "async": "^0.9.0"
+  }
+}
