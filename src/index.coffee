@@ -72,7 +72,9 @@ class Noticeboard
       if results.length == 0
         # we're not going to do multi, so must manually unwatch
         # no error, no job, 5 kids to feed
-        return @redis.unwatch callback
+        return @redis.unwatch (err) ->
+          return callback(err) if err
+          return callback()
 
       taskText = results[0]
 
@@ -135,7 +137,7 @@ class Noticeboard
 
     # not so sure about this check anymore..
     abort = =>
-      console.log "job posted again or not started, so aborting"
+      #console.log "job posted again or not started, so aborting"
       return @redis.unwatch callback
 
     @redis.exists "job:#{taskText}:started", (err, startedExists) =>
@@ -183,7 +185,7 @@ class Noticeboard
     @redis.watch "workingJobs"
 
     abort = =>
-      console.log "aborting because job queued or started again"
+      #console.log "aborting because job queued or started again"
       return @redis.unwatch callback
 
     # see if the task is in queuedJobs or workingJobs
@@ -198,7 +200,7 @@ class Noticeboard
       isQueued = results[0]
       isWorking = results[1]
 
-      console.log isQueued, isWorking
+      #console.log isQueued, isWorking
 
       # You shouldn't be allowed to clear a failure that's been queued again or
       # started in the meantime because we're going to delete the task's data.
@@ -247,12 +249,12 @@ class Roustabout extends EventEmitter
   poll: ->
     return unless @running
     @emit 'poll', @
-    @connection.checkAndStart (err, task, data) =>
+    @noticeboard.checkAndStart (err, task, data) =>
       # If the queue is empty or the redis transaction got discarded due to a
       # watch it shouldn't count as an error. That's just blank err and task.
       @handleRedisError(err, task, data) if err
 
-      if job
+      if task
         # perform the job if we received one
         @perform(task, data)
 

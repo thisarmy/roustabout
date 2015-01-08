@@ -232,7 +232,7 @@ tasks.push (cb) ->
           return cb(err) if err
           conn.clearFailure task, (err) ->
             return cb(err) if err
-            console.log "done clearing failure"
+            #console.log "done clearing failure"
             getSummary (err, s) ->
               return cb(err) if err
               return errBack(cb, "failedJobs != 1") unless s.failedJobs == 1
